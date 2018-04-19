@@ -1,0 +1,13 @@
+div class="chat"
+    - messages.each do |message|
+        div class="message"
+            p class="message_poster"
+                = user_id_name[message[1].to_s]
+            p class="message_text"
+                = message[3]
+    form action="/start/post_message/#{group_id}" method="POST"
+        input type="text" name="message" placeholder="POST!"
+        input type="submit" value="Send"
+div class="users"
+    - usernames.each do |username|
+        p #{username}

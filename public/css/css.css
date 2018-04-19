@@ -1,6 +1,26 @@
 body{
     padding: 0px;
     margin: 0px;
+    font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
+}
+
+.body{
+    height: 90vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+}
+
+.b1box{
+    background-image: url(https://media.tenor.com/images/a5424852abc98df69ebd4b4e366e1b6f/tenor.gif);
+}
+
+.b2box{
+    background-image: url(https://i.pinimg.com/originals/d0/3b/49/d03b490f9a10edf6f35b811ec1e31517.gif);
+}
+
+.b3box{
+    background-image: url(https://i.pinimg.com/originals/0f/ef/89/0fef89cec521a42e4e85cb545241f665.gif);
 }
 
 .content{
@@ -27,10 +47,14 @@ header{
 }
 
 .loginform{
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
-    height: 100px;
-    justify-content: space-between
+    height: 150px;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .startblock{
@@ -45,6 +69,15 @@ header{
     align-items: center;
 }
 
+.groupbox{
+    border-radius: 5px;
+    background-color: lightcyan;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
 .rightblock{
     background-color: white;
     display: flex;
@@ -56,6 +89,86 @@ header{
 .invitebox{
     border-radius: 5px;
     background-color: lightcyan;
-    height: 100px;
-    width: 100px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+p{
+    margin: 0px;
+    text-decoration: none;
+    color: black;
+}
+
+h2{
+    margin: 20px;
+    align-self: center;
+}
+
+h1{
+    text-decoration: none;
+    color: black;
+}
+
+a.title{
+    text-decoration: none;
+}
+
+a.agroupbox{
+    text-decoration: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    border: 0px;
+    border-bottom: 1px;
+    border-color: black;
+    border-style: dashed;
+    transition: 0.5s;
+}
+
+div.chat{
+    display: flex;
+    
+}
+
+div.message{
+    border: 2px solid black;
+    margin: 2px;
+    display: flex;
+    flex-direction: row;
+}
+
+p.message_text{
+
+}
+
+p.message_poster{
+    font-size: 20px;
+    margin-right: 20px;
+}
+
+div.group{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 20px;
+}
+
+a.agroupbox:hover{
+    background-color: #AAFFFF;
+    transition: 0.5s;
+}
+
+.groupform{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    margin-top: 20px;
+}
+
+input{
+    border: 0 solid black;
+    border-radius: 5px;
+    height: 25px;
+    width: 180px;
+    margin-bottom: 10px;
 }

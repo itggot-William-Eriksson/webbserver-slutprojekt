@@ -1,4 +1,15 @@
 div class="leftblock startblock"
     div class="groupbox"
+        h2 Groups
+        - if groups.join == ""
+            p You have no groups
+        - groups.each do |group_id|
+            a href="/start/groups/#{group_id.join}" class="agroupbox"
+                div class="group"
+                    p #{group_id_name[group_id.join]}
+        
+        form action="/start/groups/create" method="POST" class="groupform"
+            input type="text" name="group_name" placeholder="Group Name"
+            input type="submit" value="Create"
 div class="rightblock startblock"
-    div class="invitebox"
+    div class="groupbox"
