@@ -14,15 +14,25 @@ module Database
 
     def fetch_userinfo(username, data)
         db = connect
-        if data == nil
+        if data == ""
             return db.execute("SELECT * FROM users WHERE name = ?", [username])
         end
         return db.execute("SELECT #{data} FROM users WHERE name = ?", [username])
     end
 
-    def fetch_users_from_group(group_id)
+    def fetch_userids_from_group(group_id)
         db = connect
         return db.execute("SELECT userid FROM user_group WHERE groupid = ?", [group_id])
+    end
+
+    def fetch_userinfo_from_group(group_id)
+        db = connect
+        return db.execute("SELECT id,name FROM users WHERE id IN (SELECT userid FROM user_group WHERE groupid = ?)", [group_id])
+    end
+
+    def fetch_all_users()
+        db = connect
+        return db.execute("SELECT id,name FROM users")
     end
     
     def fetch_groupinfo(username, data)
@@ -31,6 +41,11 @@ module Database
             return db.execute("SELECT * FROM groups WHERE name = ?", [username])
         end
         return db.execute("SELECT #{data} FROM groups WHERE name = ?", [username])
+    end
+
+    def fetch_group_leader(group_id)
+        db = connect
+        return db.execute("SELECT groupleaderid FROM groups WHERE id = ?", [group_id])
     end
 
 end
