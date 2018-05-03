@@ -53,9 +53,9 @@ include Censor
 				all_invited_users = fetch_invited_userinfo(group_id)
 				all_users = all_users.reject {|w| users.include? w}
 				all_users = all_users.reject {|w| all_invited_users.include? w}
-				slim(:groupifleader, locals:{users:users, messages:messages, group_id:group_id, all_users:all_users})
+				slim(:groupifleader, locals:{users:users, messages:messages, group_id:group_id, all_users:all_users, logged_in_user:logged_in_user[0][0].to_s})
 			else
-				slim(:group, locals:{users:users, messages:messages, group_id:group_id})
+				slim(:group, locals:{users:users, messages:messages, group_id:group_id, logged_in_user:logged_in_user[0][0].to_s})
 			end
 		else
 			session[:fail_message] = "You are not allowed to do that"

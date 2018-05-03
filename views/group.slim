@@ -3,11 +3,16 @@ div class="chat"
     - users.each do |user|
         - user_id_name[user[0]] = user[1]
     - messages.each do |message|
-        div class="message"
-            p class="message_poster"
-                = user_id_name[message[1]]
-            p class="message_text"
-                = message[3]
+        - if message[1].to_s == logged_in_user.to_s
+            div class="message logged_in"
+                p class="message_text"
+                    = message[3]
+        - else
+            div class="message"
+                p class="message_poster"
+                    = user_id_name[message[1]] +":"
+                p class="message_text"
+                    = message[3]
     form action="/start/post_message/#{group_id}" method="POST"
         input type="text" name="message" placeholder="POST!"
         input type="submit" value="Send"
