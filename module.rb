@@ -32,7 +32,7 @@ module Database
         return db.execute("SELECT id,name FROM users WHERE id IN (SELECT userid FROM user_group WHERE groupid = ?)", [group_id])
     end
 
-    def fetch_userinfo_from_invite_by_groupid(group_id)
+    def fetch_invited_userinfo(group_id)
         db = connect
         return db.execute("SELECT id,name FROM users WHERE id IN (SELECT invitedid FROM invites WHERE groupid = ?)", [group_id])
     end

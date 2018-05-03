@@ -49,9 +49,7 @@ include Database
 			end
 			if leader_id.to_s == logged_in_user[0][0].to_s
 				all_users = fetch_all_users()
-				all_invited_users = fetch_userinfo_from_invite_by_groupid(group_id)
-				p all_invited_users
-				p users
+				all_invited_users = fetch_invited_userinfo(group_id)
 				all_users = all_users.reject {|w| users.include? w}
 				all_users = all_users.reject {|w| all_invited_users.include? w}
 				slim(:groupifleader, locals:{users:users, messages:messages, group_id:group_id, all_users:all_users})
@@ -136,7 +134,6 @@ include Database
 		invite_id = params["invite_id"]
 		user_id = fetch_userinfo(session[:user], "id").join
 		invite = fetch_invite_info(invite_id)
-		p user_id, invite[3], invite
 		if user_id.to_s != invite[0][3].to_s
 			session[:fail_message] = "You are not allowed to do that"
 			session[:user] = nil
@@ -212,7 +209,6 @@ include Database
 			session[:redirect_to] = "/start"
 			redirect('/fail')
 		end
-		p group_name
 		if group_name.strip == ""
 			session[:fail_message] = "Group name must contain letters"
 			session[:redirect_to] = "/start"
