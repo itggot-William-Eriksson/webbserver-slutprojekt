@@ -7,9 +7,15 @@ div class="leftblock startblock"
             a href="/start/groups/#{group_id.join}" class="agroupbox"
                 div class="group"
                     p #{group_id_name[group_id.join]}
-        
         form action="/start/groups/create" method="POST" class="groupform"
             input type="text" name="group_name" placeholder="Group Name"
             input type="submit" value="Create"
 div class="rightblock startblock"
     div class="groupbox"
+        - invites.each do |invite|
+            div class="invite"
+                p = "You have been invited to the group: #{group_id_name[invite[1].to_s]}"
+                a href="/start/accept/#{invite[0]}"
+                    p Accept
+                a href="/start/decline/#{invite[0]}"
+                    p Decline

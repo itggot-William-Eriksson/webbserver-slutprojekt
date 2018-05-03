@@ -215,7 +215,7 @@ input{
 
 input.invite{
     width: auto;
-    margin: 5px;
+    background-color: transparent;
 }
 
 div.chat{

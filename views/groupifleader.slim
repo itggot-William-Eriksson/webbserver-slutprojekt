@@ -20,7 +20,5 @@ div class="invite"
     ul id="myUL"
         - all_users.each do |user|
             li
-                form action="/start/invite/#{group_id}/#{user[0]}" method="post"
-                    = user[1]
-                    input type="submit" Value="Invite" class="invite"
+                a href="/start/invite/#{group_id}/#{user[0]}" = user[1]
 script src="/js/js.js"
