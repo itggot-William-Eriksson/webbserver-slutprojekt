@@ -22,13 +22,9 @@ include Database
 			redirect('/')
 		end
 		user_id = fetch_userinfo(session[:user], "id").join
-		groups = fetch("groupid", "user_group", "userid", user_id)
-		invites = fetch("*", "invites", "invitedid", user_id)
-		allgroups = fetch("groupid", "user_group", "", "")
-		group_id_name = {}
-		allgroups.each do |group_id|
-			group_id_name[group_id.join] = fetch("name", "groups", "id", group_id.join).join
-		end
+		groups = fetch_groups(user_id)
+		invites = fetch_invites(user_id)
+		group_id_name = fetch_groupid()
 		slim(:start, locals:{username:session[:user], groups:groups, invites:invites, group_id_name:group_id_name})
 	end
 
@@ -39,7 +35,7 @@ include Database
 		message_limit = 10
 		group_id = params["id"]
 		users = fetch_userinfo_from_group(group_id)
-		messages = fetch("*", "messages", "groupid", group_id)
+		messages = fetch_messages(group_id)
 		leader_id = fetch_group_leader(group_id).join
 		logged_in_user = fetch_userinfo(session[:user], "")
 		logged_in_user[0].delete_at(2)
@@ -79,7 +75,6 @@ include Database
 	post '/login' do
 		username = params["username"]
 		password = params["password"]
-		db = connect
 		begin
 			password_digest = fetch_userinfo(username, "password").join
 			password_digest = BCrypt::Password.new(password_digest)
@@ -108,14 +103,12 @@ include Database
 		logged_in_user = fetch_userinfo(session[:user], "")
 		logged_in_user[0].delete_at(2)
 		if  logged_in_user[0][0].to_s == sender_id.to_s
-			db = connect
-			checkfor = db.execute("SELECT * FROM invites WHERE groupid = ? AND invitedid = ?", [group_id,reciever_id]).join
-			if checkfor != ""
+			if checkfor(group_id,reciever_id) != ""
 				session[:fail_message] = "User already invited"
 				session[:redirect_to] = "/start/groups/#{group_id}"
 				redirect('/fail')
 			else
-				db.execute("INSERT INTO invites (groupid, inviterid, invitedid) VALUES (?,?,?)",[group_id,sender_id,reciever_id])
+				insert_invite(group_id,sender_id,reciever_id)
 				redirect("/start/groups/#{group_id}")
 			end
 		else
@@ -130,7 +123,6 @@ include Database
 		if session[:user] == nil
 			redirect('/')
 		end
-		db = connect
 		invite_id = params["invite_id"]
 		user_id = fetch_userinfo(session[:user], "id").join
 		invite = fetch_invite_info(invite_id)
@@ -149,7 +141,6 @@ include Database
 		if session[:user] == nil
 			redirect('/')
 		end
-		db = connect
 		invite_id = params["invite_id"]
 		user_id = fetch_userinfo(session[:user], "id").join
 		invite = fetch_invite_info(invite_id)
@@ -160,7 +151,7 @@ include Database
 			redirect('/fail')
 		else
 			remove_invite(invite_id)
-			db.execute("INSERT INTO user_group (userid, groupid) VALUES (?,?)",[user_id, invite[0][1]])
+			insert_user_group(user_id, invite[0][1])
 			redirect("/start")
 		end
 	end
@@ -190,9 +181,8 @@ include Database
 			redirect('/fail')
 		end
 		password_digest = BCrypt::Password.create(password)
-		db = connect
 		begin
-			db.execute("INSERT INTO users (name, password) VALUES (?,?)",[username,password_digest])
+			register(username,password_digest)
 		rescue
 			session[:fail_message] = "Username already in use"
 			session[:redirect_to] = "/register"
@@ -202,7 +192,9 @@ include Database
 	end
 
 	post '/start/groups/create' do
-		db = connect
+		if session[:user] == nil
+			redirect('/')
+		end
 		group_name = params["group_name"]
 		if group_name.length < 3 || group_name.length > 60
 			session[:fail_message] = "Group name must be between 3 and 60 characters"
@@ -215,9 +207,7 @@ include Database
 			redirect('/fail')
 		end
 		user_id = fetch_userinfo(session[:user], "id").join
-		db.execute("INSERT INTO groups (name, groupleaderid) VALUES (?,?)",[group_name,user_id])
-		group_id = fetch("id", "groups", "name", group_name).join
-		db.execute("INSERT INTO user_group (userid, groupid) VALUES (?,?)",[user_id, group_id])
+		create_group(user_id,group_name)
 		redirect('/start')
 	end
 
@@ -241,8 +231,7 @@ include Database
 		logged_in_user = fetch_userinfo(session[:user], "")
 		logged_in_user[0].delete_at(2)
 		if users.include?(logged_in_user[0])
-			db = connect
-			db.execute("INSERT INTO messages (userid, groupid, message) VALUES (?,?,?)",[logged_in_user[0][0],group_id,message])
+			message(logged_in_user[0][0],group_id,message)
 			redirect("/start/groups/#{group_id}")
 		else
 			session[:fail_message] = "You are not allowed to do that"
