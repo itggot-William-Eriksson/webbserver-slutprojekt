@@ -3,17 +3,6 @@ module Database
         return SQLite3::Database.new("database.db")
     end
 
-    # def fetch(data, table, restriction, limit)
-    #     db = connect
-    #     if restriction == nil
-    #         return db.execute("SELECT #{data} FROM #{table}")
-    #     elsif restriction == ""
-    #         return db.execute("SELECT #{data} FROM #{table}")
-    #     else
-    #         return db.execute("SELECT #{data} FROM #{table} WHERE #{restriction} = ?", [limit])
-    #     end
-    # end
-
     def fetch_groups(id)
         db = connect()
         return db.execute("SELECT groupid FROM user_group WHERE userid=?", [id])
@@ -126,5 +115,32 @@ module Database
     def message(logged_in_user,group_id,message)
         db = connect()
         db.execute("INSERT INTO messages (userid, groupid, message) VALUES (?,?,?)",[logged_in_user,group_id,message])
+    end
+end
+
+module Censor # kollaboration med Oscar Sjöcrona
+    def censor(message)
+        ugly_words = File.readlines("public/misc/curse_words.txt")
+        ugly_words.each_with_index do |word,i|
+            ugly_words[i] = word.chomp
+        end
+        message = message.split(" ")
+        edited_message = []
+        message.each do |word|
+            word1 = word
+            p ugly_words
+            p word.downcase
+            if ugly_words.include?(word.downcase)
+                y = word.length
+                x = '*'
+                o = ''
+                y.times do 
+                    o+=x
+                end
+                word1 = o
+            end
+            edited_message.push(word1)
+        end
+        return edited_message.join(" ")
     end
 end

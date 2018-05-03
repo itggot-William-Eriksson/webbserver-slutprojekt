@@ -4,6 +4,8 @@ require_relative 'module.rb'
 
 include Database
 
+include Censor
+
 	use Rack::Session::Cookie,	:key => 'rack.session',
 								:expire_after => 62312738213721837897,
 								:secret => 'myhiddensecret'
@@ -32,7 +34,6 @@ include Database
 		if session[:user] == nil
 			redirect('/')
 		end
-		message_limit = 10
 		group_id = params["id"]
 		users = fetch_userinfo_from_group(group_id)
 		messages = fetch_messages(group_id)
@@ -40,8 +41,12 @@ include Database
 		logged_in_user = fetch_userinfo(session[:user], "")
 		logged_in_user[0].delete_at(2)
 		if users.include?(logged_in_user[0])
+			message_limit = 10
 			while messages.length > message_limit
 				messages.delete_at(0)
+			end
+			messages.each_with_index do |message,index|
+				messages[index][3] = censor(message[3])
 			end
 			if leader_id.to_s == logged_in_user[0][0].to_s
 				all_users = fetch_all_users()
